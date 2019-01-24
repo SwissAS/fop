@@ -2629,7 +2629,7 @@ public final class FOPropertyMapping implements Constants {
         // change-bar-width
         m  = new LengthProperty.Maker(PR_CHANGE_BAR_WIDTH);
         m.setInherited(true);
-        m.setDefault("6pt");
+        m.setDefault("4pt");
         addPropertyMaker("change-bar-width", m);
 
         // change-bar-offset
