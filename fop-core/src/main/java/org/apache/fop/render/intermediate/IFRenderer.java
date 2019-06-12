@@ -67,6 +67,7 @@ import org.apache.fop.area.PageSequence;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
+import org.apache.fop.area.Trait.ExternalLink;
 import org.apache.fop.area.inline.AbstractTextArea;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
@@ -970,8 +971,16 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             if (extLink != null) {
                 String extDest = extLink.getDestination();
                 if (extDest != null && extDest.length() > 0) {
+                	if(shouldEnrichLinkWithLocationUrlParameters(extLink)) {
+                		if(isUsingUrlParameters(extDest)) {
+                			extDest += "&";
+                		}else {
+                			extDest += "?";
+                		}
+                		extLink.setDestination(extDest + "page=" + currentPageViewport.getPageNumber() + "&x=" + ipRect.getX() + "&y=" + ipRect.getY() + "&w=" + ipRect.getWidth() + "&h=" + ipRect.getHeight());
+                	}
                     linkTraitFound = true;
-                    action = new URIAction(extDest, extLink.newWindow());
+                    action = new URIAction(extLink.getDestination(), extLink.newWindow());
                     action = actionSet.put(action);
                 }
             }
@@ -985,6 +994,22 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             Link link = new Link(action, ipRect);
             this.deferredLinks.add(link);
         }
+    }
+    
+    /**
+     * @param el {@link ExternalLink} to be checked
+     * @return true if the links destination should be enriched with x,y,w & h URL parameters
+     */
+    private boolean shouldEnrichLinkWithLocationUrlParameters(ExternalLink el) {
+    	return el.getDestination().startsWith("amos://PDF_OVL");
+    }
+    
+    /**
+     * @param url
+     * @return true if the given URL contains URL variables already
+     */
+    private boolean isUsingUrlParameters(String url) {
+    	return url.indexOf('?') > -1 && url.indexOf('?') < url.indexOf('=');
     }
 
     /** {@inheritDoc} */
