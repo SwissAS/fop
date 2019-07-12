@@ -483,6 +483,14 @@ public final class Trait implements Serializable {
             sb.append(",dest=").append(this.destination);
             return sb.toString();
         }
+
+		/**
+		 * Set a new destination string
+		 * @param destination
+		 */
+		public void setDestination(String destination) {
+			this.destination = destination;
+		}
     }
 
     /**
